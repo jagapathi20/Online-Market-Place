@@ -1,5 +1,3 @@
-from re import M
-from turtle import mode
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 
@@ -40,10 +38,10 @@ class UserManager(BaseUserManager):
         return user
     
 class User(AbstractBaseUser):
-    RESTAURANT = 1
+    VENDOR = 1
     CUSTOMER = 2
     ROLE_CHOICE = (
-        (RESTAURANT, 'Restaurant'),
+        (VENDOR, 'Vendor'),
         (CUSTOMER, 'Customer')
     )
     first_name = models.CharField(max_length=50)
