@@ -18,7 +18,7 @@ class Category(models.Model):
         self.category_name = self.category_name.capitalize()
     
     def __str__(self):
-        return self.name
+        return self.category_name
 
 class FoodItem(models.Model):
     vendor = models.ForeignKey(Vendor, on_delete=models.CASCADE)
@@ -33,4 +33,4 @@ class FoodItem(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.name
+        return self.food_title
