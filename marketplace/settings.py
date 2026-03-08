@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'accounts',
     'vendor',
     'menu',
+    'market',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -76,6 +77,8 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_google_maps_api_key',
+                'market.context_processors.get_cart_counter',
+                'market.context_processors.get_cart_amount',
             ],
         },
     },
@@ -157,4 +160,4 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-GOOGLE_MAPS_API_KEY = env('GOOGLE_MAPS_API_KEY')
+GOOGLE_API_KEY = env('GOOGLE_MAPS_API_KEY')

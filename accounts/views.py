@@ -9,6 +9,7 @@ from .utils import send_verification_email
 from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from vendor.models import Vendor
+from django.utils.text import slugify
 # Create your views here.
 
 
@@ -60,6 +61,7 @@ def registerVendor(request):
             user.save()
             vendor = v_form.save(commit=False)
             vendor.user = user
+            vendor.vendor_slug = slugify(vendor.vendor_name + "-" + str(user.id))
             vendor.user_profile = user.userprofile
             vendor.save()
             mail_subject = 'Please activate your account'
