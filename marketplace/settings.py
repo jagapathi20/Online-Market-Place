@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'vendor',
     'menu',
     'market',
+    'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -67,7 +68,7 @@ ROOT_URLCONF = 'marketplace.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'BACKEND': 'django.contrib.gis.db.backends.postgis',
         'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -92,7 +93,7 @@ WSGI_APPLICATION = 'marketplace.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.contrib.gis.db.backends.postgis',
         'NAME': env('DB_NAME'),
         'USER': env('DB_USER'),
         'PASSWORD': env('DB_PASSWORD'),
@@ -161,3 +162,9 @@ EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 GOOGLE_API_KEY = env('GOOGLE_MAPS_API_KEY')
+
+
+if DEBUG:
+    GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
+    GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
+    SPATIALITE_LIBRARY_PATH = '/opt/homebrew/opt/spatialite-tools/lib/mod_spatialite.dylib'
