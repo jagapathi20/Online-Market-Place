@@ -25,10 +25,11 @@ class Vendor(models.Model):
         now = datetime.now().strftime('%H:%M:%S')
         
         for i in current_opening_hours:
-            start = str(datetime.strptime(i.from_hour, '%I:%M:%p').time())
-            end = str(datetime.strptime(i.to_hour, '%I:%M:%S').time())
-            if now > start and now < end:
-                return True
+            if not i.is_closed:
+                start = str(datetime.strptime(i.from_hour, '%I:%M:%p').time())
+                end = str(datetime.strptime(i.to_hour, '%I:%M:%S').time())
+                if now > start and now < end:
+                    return True
         return False
 
     def save(self, *args, **kwargs):
