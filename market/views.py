@@ -7,9 +7,11 @@ from django.contrib.gis.db.models.functions import Distance
 
 
 from market.context_processors import get_cart_counter
-from vendor.models import Vendor
+from vendor.models import OpeningHour, Vendor
 from menu.models import Category, FoodItem
 from market.models import Cart
+
+from datetime import date, datetime
 
 # Create your views here.
 def market(request):
@@ -25,11 +27,15 @@ def vendor_detail(request, vendor_slug):
             queryset = FoodItem.objects.filter(is_available=True)
         )
     )
+    opening_hours = OpeningHour.objects.filter(vendor=vendor).order_by('day', 'from_hour')
+    today = date.today().weekday()
+    current_opening_hours = OpeningHour.objects.filter(vendor=vendor, day=today)
+
     if request.user.is_authenticated:
         cart_items = Cart.objects.filter(user=request.user)
     else:
         cart_items = None
-    return render(request, 'marketplace/vendor_detail.html', {'vendor': vendor, 'categories': categories, 'cart_items': cart_items})
+    return render(request, 'marketplace/vendor_detail.html', {'vendor': vendor, 'categories': categories, 'cart_items': cart_items, 'opening_hours': opening_hours, 'current_opening_hours': current_opening_hours})
 
 
 def add_to_cart(request, food_id):
