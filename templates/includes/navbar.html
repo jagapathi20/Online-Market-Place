@@ -79,7 +79,7 @@
 
         // hit AJAX request to googlemaps api endpoint and get the location data using those lat and lng
         var GOOGLE_API_KEY = "{{ GOOGLE_API_KEY }}"
-        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"+&key="+GOOGLE_API_KEY
+        var url = "https://maps.googleapis.com/maps/api/geocode/json?latlng="+lat+","+lng+"+&key="+GOOGLE_API_KEY;
         
         $.ajax({
             url: url,

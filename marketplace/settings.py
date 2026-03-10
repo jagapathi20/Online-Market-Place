@@ -79,9 +79,10 @@ TEMPLATES = [
                 'django.contrib.messages.context_processors.messages',
                 'accounts.context_processors.get_vendor',
                 'accounts.context_processors.get_user_profile',
-                'accounts.context_processors.get_google_maps_api_key',
+                'accounts.context_processors.get_google_api',
                 'market.context_processors.get_cart_counter',
-                'market.context_processors.get_cart_amount',
+                'market.context_processors.get_cart_amounts',
+                'market.context_processors.get_paypal_client_id',
             ],
         },
     },
@@ -163,10 +164,18 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 EMAIL_USE_TLS = env('EMAIL_USE_TLS')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
-GOOGLE_API_KEY = env('GOOGLE_MAPS_API_KEY')
+GOOGLE_API_KEY = env('GOOGLE_API_KEY')
 
 
 if DEBUG:
     GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
     GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
     SPATIALITE_LIBRARY_PATH = '/opt/homebrew/opt/spatialite-tools/lib/mod_spatialite.dylib'
+
+
+PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
+PAYPAL_CLIENT_SECRET = env('PAYPAL_CLIENT_SECRET')
+PAYPAL_MODE = env('PAYPAL_MODE', default='sandbox')
+PAYPAL_CURRENCY = env('PAYPAL_CURRENCY', default='USD')
+
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'

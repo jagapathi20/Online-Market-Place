@@ -10,7 +10,7 @@ def get_cart_counter(request):
         cart_count = 0
     return {'cart_count': cart_count}
 
-def get_cart_amount(request):
+def get_cart_amounts(request):
     subtotal = 0
     tax = 0
     grand_total = 0
