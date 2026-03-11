@@ -17,8 +17,8 @@ def send_verification_email(request, user, mail_subject, email_template):
             'token': default_token_generator.make_token(user)
         })
         to_email = user.email
-        mail = EmailMessage(mail_subject, message, from_email, 
-        to=[to_email])
+        mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
+        mail.content_subtype = 'html'
         mail.send()
     except Exception as e:
         print(f"Error sending verification email: {e}")
@@ -32,4 +32,5 @@ def send_notification(mail_subject, mail_template, context):
         mail = EmailMessage(mail_subject, message, from_email, to=to_email)
     else:
         mail = EmailMessage(mail_subject, message, from_email, to=[to_email])
+    mail.content_subtype = 'html'
     mail.send()
