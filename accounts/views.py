@@ -10,7 +10,10 @@ from django.utils.http import urlsafe_base64_decode
 from django.contrib.auth.tokens import default_token_generator
 from vendor.models import Vendor
 from django.utils.text import slugify
-from Orders.models import Order
+from orders.models import Order
+import datetime
+
+
 # Create your views here.
 
 
@@ -41,6 +44,8 @@ def registerUser(request):
     else:
         form = UserForm()
     return render(request, 'accounts/registerUser.html', {'form': form})
+
+
 
 def registerVendor(request):
     if request.user.is_authenticated:
@@ -78,6 +83,9 @@ def registerVendor(request):
         v_form = VendorForm()
     return render(request, 'accounts/registerVendor.html', {'form': form, 'v_form': v_form})
 
+
+
+
 def activate(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()
@@ -92,6 +100,9 @@ def activate(request, uidb64, token):
     else:
         messages.error(request, 'Invalid activation link')
         return redirect('registerUser')
+
+
+
 
 def login(request):
     if request.user.is_authenticated:
@@ -110,10 +121,16 @@ def login(request):
             return redirect('login')
     return render(request, 'accounts/login.html')
 
+
+
+
 def logout(request):
     auth.logout(request)
     messages.success(request, 'Logged out successfully')
     return redirect('login')
+
+
+
 
 @login_required(login_url='login')
 def myAccount(request):
@@ -125,17 +142,26 @@ def myAccount(request):
     else:
         return redirect('adminDashboard')
 
+
+
+
 def is_customer(user):
     if user.role == 1:
         return True
     else:
         raise auth.PermissionDenied
 
+
+
+
 def is_vendor(user):
     if user.role == 2:
         return True
     else:
         raise auth.PermissionDenied
+
+
+
 
 @login_required(login_url='login')
 @user_passes_test(is_customer)
@@ -149,10 +175,36 @@ def customerDashboard(request):
          'recent_orders': recent_orders
     })
 
+
+
+
+
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
 def vendorDashboard(request):
-    return render(request, 'accounts/vendorDashboard.html')
+    vendor = Vendor.objects.get(user=requset.user)
+    orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at')
+    recent_orders = orders[:5]
+
+    current_month = datetime.datetime.now().month
+    current_month_orders = Order.objects.filter(vendors__in=[vendor.id], created_at__month=current_month)
+    current_month_revenue = 0
+    for order in current_month_orders:
+        current_month_revenue += order.get_total_by_vendor()['grand_total']
+
+    total_revenue = 0
+    for order in orders:
+        total_revenue += order.get_total_by_vendor()['grand_total']
+    return render(request, 'accounts/vendorDashboard.html',
+     {'orders': orders, 
+     'order_count': orders.count(), 
+     'recent_orders': recent_orders,
+     'total_revenue': total_revenue,
+     'current_month_revenue': current_month_revenue
+     })
+
+
+
 
 def forgot_password(request):
     if request.method == 'POST':
@@ -168,6 +220,9 @@ def forgot_password(request):
             return redirect('forgot_password')
     return render(request, 'accounts/forgot_password.html')
 
+
+
+
 def reset_password_validate(request, uid64, token):
     try:
         uid = urlsafe_base64_decode(uid64)
@@ -182,6 +237,11 @@ def reset_password_validate(request, uid64, token):
     else:
         messages.error(request, 'This link has been expired')
         return redirect('myAccount')
+
+
+
+
+
 
 def reset_password(request):
     if request.method == 'POST':

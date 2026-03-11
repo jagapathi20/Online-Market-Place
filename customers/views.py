@@ -32,7 +32,7 @@ def my_orders(request):
     return render(request, 'customers/y_orders.html', {'orders': orders})
 
 
-def my_orders(request, order_number):
+def order_detail(request, order_number):
     try:
         order = Order.objects.get(order_number=order_number)
         ordered_food = OrderedFood.objects.filter(order=order)

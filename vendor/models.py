@@ -10,7 +10,7 @@ class Vendor(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, related_name='vendor')
     user_profile = models.OneToOneField(UserProfile, on_delete=models.CASCADE, related_name='vendor')
     vendor_name = models.CharField(max_length=50)
-    vendor_slug = models.SlugField(max_length=100, unique=True)
+    vendor_slug = models.SlugField(max_length=100, unique=True, blank=True)
     vendor_license = models.ImageField(upload_to='vendor/license')
     is_approved = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -33,6 +33,9 @@ class Vendor(models.Model):
         return False
 
     def save(self, *args, **kwargs):
+        if not self.vendor_slug:
+            self.vendor_slug = self.vendor_name.lower().replace(' ', '-')
+        
         if self.pk is not None:
             previous = Vendor.objects.get(pk=self.pk)
             if previous.is_approved != self.is_approved:

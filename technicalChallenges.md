@@ -23,7 +23,5 @@ I successfully brought the database online, created the dedicated application us
 
 ---
 
-### Why This Story Stands Out:
-* **Logical Progression:** Demonstrates forming a hypothesis, testing it, and pivoting based on system feedback.
-* **Infrastructure Fluency:** Uses precise, correct terminology (host-based authentication, system-level daemon, port bindings, orphaned lock file).
-* **Resilience:** Highlights methodically breaking through three distinct systemic blockers (path issue, ghost process, permission conflict).
+## TO DO
+Pagination 

@@ -10,6 +10,8 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import razorpay
 from marketplace.settings import RZP_KEY_ID, RZP_KEY_SECRET
+from menu.models import FoodItem
+from Market.models import Tax
 
 
 
@@ -23,6 +25,28 @@ def place_order(request):
     cart_count = cart_items.count()
     if cart_count == 0:
         return redirect('marketplace')
+
+    vendor_ids = set()
+    subtotal_vendors = {}
+    get_tax = Tax.objects.filter(is_active=True)
+    total_data = {}
+    for item in cart_items:
+        vendor_id = item.fooditem.vendor.id
+        vendor_ids.add(vendor_id)
+        fooditem = FoodItem.objects.get(id=item.fooditem.id)
+        if vendor_id not in subtotal_vendors:
+            subtotal_vendors[vendor_id] = 0
+        subtotal = fooditem.price * item.quantity
+        subtotal_vendors[vendor_id] += subtotal
+        tax_dict = {}
+        for i in get_tax:
+            tax_type = i.tax_type
+            tax_percentage = i.tax_percentage
+            tax_amount = round((tax_percentage * subtotal) / 100, 2)
+            tax_dict.update({tax_type: {str(tax_percentage) : str(tax_amount)}})
+        total_data.update({vendor_id: {str(subtotal): str(tax_dict)}})
+    vendor_ids = list(vendor_ids)
+    
     sub_total = get_cart_amounts(request)['subtotal']
     total_tax = get_cart_amounts(request)['tax']
     grand_total = get_cart_amounts(request)['grand_total']
@@ -35,10 +59,12 @@ def place_order(request):
             order.user = request.user
             order.total = grand_total
             order.tax_data = json.dumps(get_cart_amounts(request)['tax_dict'])
+            order.total_data = json.dumps(total_data)
             order.total_tax = total_tax
             order.payment_method = request.POST['payment_method']
             order.save()
             order.order_number = generate_order_number(order.id)
+            order.vendors.add(*vendor_ids)
             order.save()
 
             data = {

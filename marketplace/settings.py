@@ -46,6 +46,7 @@ INSTALLED_APPS = [
     'menu',
     'market',
     'customers',
+    'orders',
     'django.contrib.gis',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -63,13 +64,14 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'orders.request_object.RequestObjectMiddleware',
 ]
 
 ROOT_URLCONF = 'marketplace.urls'
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.contrib.gis.db.backends.postgis',
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': ['templates'],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -174,9 +176,7 @@ if DEBUG:
 
 
 PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
-PAYPAL_CLIENT_SECRET = env('PAYPAL_CLIENT_SECRET')
-PAYPAL_MODE = env('PAYPAL_MODE', default='sandbox')
-PAYPAL_CURRENCY = env('PAYPAL_CURRENCY', default='USD')
+
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
 
