@@ -179,3 +179,6 @@ PAYPAL_MODE = env('PAYPAL_MODE', default='sandbox')
 PAYPAL_CURRENCY = env('PAYPAL_CURRENCY', default='USD')
 
 SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin-allow-popups'
+
+RZP_KEY_ID = env('RZP_KEY_ID')
+RZP_KEY_SECRET = env('RZP_KEY_SECRET')

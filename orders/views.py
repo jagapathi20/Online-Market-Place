@@ -8,6 +8,13 @@ from accounts.utils import send_notification
 import json
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+import razorpay
+from marketplace.settings import RZP_KEY_ID, RZP_KEY_SECRET
+
+
+
+client = razorpay.Client(auth=(RZP_KEY_ID, RZP_KEY_SECRET))
+
 
 # Create your views here.
 @login_required(login_url='login')
@@ -34,10 +41,26 @@ def place_order(request):
             order.order_number = generate_order_number(order.id)
             order.save()
 
+            data = {
+                'amount': float(order.total) * 100,
+                'currency': 'INR',
+                'receipt': 'receipt#'+order.order_number
+            }
+            rzp_order = client.order.create(data=data)
+            rzp_order_id = rzp_order['id']
+            context = {
+                'cart_items': cart_items,
+                'order': order,
+                'rzp_order_id': rzp_order_id,
+                'RZP_KEY_ID': RZP_KEY_ID,
+                'rzp_amount': float(order.total) * 100
+            }
+            return render(request, 'orders/palce_order.html', context)
+
         else:
             print(form.errors)
 
-    return render(request, 'orders/place_order.html', {'cart_items': cart_items, 'order': order})
+    return render(request, 'orders/place_order.html')
 
 
 @login_required(login_url='login')
@@ -86,7 +109,7 @@ def payment(request):
         mail_subject = 'You have recieved a new order'
         mail_template = 'orders/new_order_received.html'
         to_emails = set()
-        for i in cart.cart_items:
+        for i in cart_items:
             to_emails.add(i.fooditem.vendor.user.email)
         context = {
             'order': order,
