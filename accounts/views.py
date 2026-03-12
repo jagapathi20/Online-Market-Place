@@ -20,7 +20,7 @@ import datetime
 def registerUser(request):
     if request.user.is_authenticated:
         messages.warning(request, 'You are already logged in')
-        return redirect('myAccount')
+        return redirect('myAccount')                                #######
     if request.method == 'POST':
         form = UserForm(request.POST)
         if form.is_valid():
@@ -140,7 +140,7 @@ def myAccount(request):
     elif user.role == 2:
         return redirect('customerDashboard')
     else:
-        return redirect('adminDashboard')
+        return redirect('/admin')
 
 
 
@@ -182,7 +182,7 @@ def customerDashboard(request):
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
 def vendorDashboard(request):
-    vendor = Vendor.objects.get(user=requset.user)
+    vendor = Vendor.objects.get(user=request.user)
     orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('-created_at')
     recent_orders = orders[:5]
 
@@ -254,6 +254,8 @@ def reset_password(request):
             user.is_axtive = True
             user.save()
             messages.success(request, 'Password reset successfull')
+            return redirect('login')
         else:
             messages.error(request, 'Passwords do not match')
+            return redirect('reset_password')
     return render(request, 'accounts/reset_password.html')

@@ -1,6 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
-
-from menu.models import Category
+from .models import OpeningHour, Vendor
+from django.http import HttpResponse, JsonResponse
+from menu.models import Category, FoodItem
 from orders.models import Order, OrderedFood
 from vendor.models import Vendor
 from .forms import VendorForm, OpeningHourForm
@@ -37,12 +38,19 @@ def vprofile(request):
         vendor_form = VendorForm(instance=vendor)
     return render(request, 'vendor/vprofile.html', {'profile_form': profile_form, 'vendor_form': vendor_form, 'profile': profile, 'vendor': vendor})
 
+
+
+
+
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
 def menu_builder(request):
     vendor = get_vendor(request)
     categories = Category.objects.filter(vendor=vendor).order_by('created_at')
     return render(request, 'vendor/menu_builder.html', {'vendor': vendor, 'categories': categories})
+
+
+
 
 
 @login_required(login_url='login')
@@ -52,6 +60,9 @@ def fooditems_by_category(request, pk):
     category = get_object_or_404(Category, pk=pk)
     fooditems = FoodItem.objects.filter(category=category, vendor=vendor)
     return render(request, 'vendor/fooditems_by_category.html', {'category': category, 'fooditems': fooditems})
+
+
+
 
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
@@ -72,6 +83,9 @@ def add_category(request):
     return render(request, 'vendor/add_category.html', {'form': form})
 
 
+
+
+
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
 def edit_category(request, pk):
@@ -90,6 +104,9 @@ def edit_category(request, pk):
             form = CategoryForm(instance=category)
     return render(request, 'vendor/edit_category.html', {'form': form, 'category': category})
 
+
+
+
 @login_required(login_url='login')
 @user_passes_test(is_vendor)
 def delete_category(request, pk=None):
@@ -97,6 +114,8 @@ def delete_category(request, pk=None):
     category.delete()
     messages.success(request, 'Category deleted successfully!')
     return redirect('menu_builder')
+
+
 
 
 @login_required(login_url='login')
@@ -118,6 +137,8 @@ def add_food(request):
     return render(request, 'vendor/add_food.html', {'form': form})
 
 
+
+
 def edit_food(request, pk):
     food = get_object_or_404(FoodItem, pk=pk)
     if request.method == 'POST':
@@ -134,6 +155,9 @@ def edit_food(request, pk):
             form = FoodItemForm(instance=food)
             form.fields['category'].queryset = Category.objects.filter(vendor=get_vendor(request))
     return render(request, 'vendor/edit_food.html', {'form': form, 'food': food})
+
+
+
 
 def delete_food(request, pk):
     food = get_object_or_404(FoodItem, pk=pk)
@@ -211,4 +235,4 @@ def order_detail(request, order_number):
 def my_orders(request):
     vendor = Vendor.objects.get(user=request.user)
     orders = Order.objects.filter(vendors__in=[vendor.id], is_ordered=True).order_by('created_at')
-    return rendor(request, 'vendor/my_orders.html', {'orders': orders})
+    return render(request, 'vendor/my_orders.html', {'orders': orders})

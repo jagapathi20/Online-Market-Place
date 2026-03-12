@@ -1,5 +1,5 @@
 import json
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, render, redirect
 from django.contrib.auth.decorators import login_required
 from accounts.models import UserProfile
 from accounts.forms import UserProfileForm, UserForm
@@ -29,7 +29,7 @@ def cprofile(request):
 
 def my_orders(request):
     orders = Order.objects.filter(user=request.user, is_ordered=True).order_by('-created_at')
-    return render(request, 'customers/y_orders.html', {'orders': orders})
+    return render(request, 'customers/my_orders.html', {'orders': orders})
 
 
 def order_detail(request, order_number):
@@ -48,5 +48,5 @@ def order_detail(request, order_number):
         })
 
     except:
-        return redirect('customerDashboard')
+        return redirect('customer')
     

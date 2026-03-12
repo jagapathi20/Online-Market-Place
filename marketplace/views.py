@@ -18,9 +18,8 @@ def get_or_set_current_location(request):
     return None
 
 def home(request):
-    lat, lng = get_or_set_current_location(request)
-    if lat and lng:
-        point = GEOSGeometry('POINT(%s %s)' % (lng, lat))
+    if get_or_set_current_location(request):
+        point = GEOSGeometry('POINT(%s %s)' % (get_or_set_current_location(request)))
         vendors = Vendor.objects.filter(user_profile__location__dwithin=(point, D(km=100))).annotate(distance=Distance('user_profile__location', point)).order_by('distance')
 
         for v in vendors:

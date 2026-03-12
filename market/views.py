@@ -14,7 +14,7 @@ from vendor.models import OpeningHour, Vendor
 from menu.models import Category, FoodItem
 from market.models import Cart
 
-from datetime import date, datetime
+from datetime import date
 
 # Create your views here.
 def market(request):
@@ -38,7 +38,15 @@ def vendor_detail(request, vendor_slug):
         cart_items = Cart.objects.filter(user=request.user)
     else:
         cart_items = None
-    return render(request, 'marketplace/vendor_detail.html', {'vendor': vendor, 'categories': categories, 'cart_items': cart_items, 'opening_hours': opening_hours, 'current_opening_hours': current_opening_hours})
+
+    context = {
+        'vendor': vendor,
+        'categories': categories,
+        'cart_items': cart_items,
+        'opening_hours': opening_hours,
+        'current_opening_hours': current_opening_hours
+    }
+    return render(request, 'marketplace/vendor_detail.html', context)
 
 
 def add_to_cart(request, food_id):
@@ -128,7 +136,7 @@ def search(request):
             v.kms = round(v.distance.km, 1)
     vendor_count = vendors.count()
 
-    return render(request, 'marketplace/search.html', {
+    return render(request, 'marketplace/listings.html', {
         'vendors': vendors,
         'vendor_count': vendor_count
     })
@@ -153,4 +161,4 @@ def checkout(request):
         'pin_code': user_profile.pin_code,
     }
     form = OrderForm(initial=default_values)
-    return render(request, 'marketplace/checkout.html', {'form': form, 'cart_items': cart_items, 'cart_count': cart_count, 'user_profile': user_profile})
+    return render(request, 'marketplace/checkout.html', {'form': form, 'cart_items': cart_items})

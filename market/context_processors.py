@@ -1,4 +1,5 @@
 from .models import Cart, Tax
+from django.conf import settings
 
 def get_cart_counter(request):
     if request.user.is_authenticated:
@@ -29,3 +30,7 @@ def get_cart_amounts(request):
             tax += tax_amount
         grand_total = subtotal + tax
     return {'subtotal': subtotal, 'tax': tax, 'grand_total': grand_total, 'tax_dict': tax_dict}
+
+
+def get_paypal_client_id(request):
+    return {'PAYPAL_CLIENT_ID':settings.PAYPAL_CLIENT_ID}
