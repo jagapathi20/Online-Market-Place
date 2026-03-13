@@ -35,7 +35,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/6.0/howto/deployment/checklist/
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['localhost', '127.0.0.1'])
 
 
 # Application definition
@@ -171,9 +171,13 @@ GOOGLE_API_KEY = env('GOOGLE_API_KEY')
 
 
 if DEBUG:
+    # Mac local development
     GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
     GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
-    SPATIALITE_LIBRARY_PATH = '/opt/homebrew/opt/spatialite-tools/lib/mod_spatialite.dylib'
+else:
+    # Linux / Docker (arm64)
+    GDAL_LIBRARY_PATH = '/usr/lib/aarch64-linux-gnu/libgdal.so'
+    GEOS_LIBRARY_PATH = '/usr/lib/aarch64-linux-gnu/libgeos_c.so'
 
 
 PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
