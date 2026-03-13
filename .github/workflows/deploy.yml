@@ -22,10 +22,8 @@ jobs:
 
       - name: Write .env file on VM
         run: |
-          ssh -i ~/.ssh/deploy_key ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }} \
-            "cat > ~/Online-Market-Place/.env << 'ENVEOF'
-          ${{ secrets.DJANGO_ENV }}
-          ENVEOF"
+          echo "${{ secrets.DJANGO_ENV }}" > .env
+          scp -i ~/.ssh/deploy_key .env ${{ secrets.GCP_VM_USER }}@${{ secrets.GCP_VM_HOST }}:~/Online-Market-Place/.env
 
       - name: Deploy
         run: |
