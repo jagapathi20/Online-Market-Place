@@ -174,11 +174,6 @@ if DEBUG:
     # Mac local development
     GDAL_LIBRARY_PATH = '/opt/homebrew/opt/gdal/lib/libgdal.dylib'
     GEOS_LIBRARY_PATH = '/opt/homebrew/opt/geos/lib/libgeos_c.dylib'
-else:
-    # Linux / Docker (arm64)
-    GDAL_LIBRARY_PATH = '/usr/lib/aarch64-linux-gnu/libgdal.so'
-    GEOS_LIBRARY_PATH = '/usr/lib/aarch64-linux-gnu/libgeos_c.so'
-
 
 PAYPAL_CLIENT_ID = env('PAYPAL_CLIENT_ID')
 
